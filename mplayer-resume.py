@@ -5,7 +5,6 @@ import os
 import subprocess
 import string
 import re
-import boltons.fileutils
 import time
 
 if len(sys.argv) != 2:
