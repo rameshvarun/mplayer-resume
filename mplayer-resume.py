@@ -3,15 +3,34 @@
 import sys
 import os
 import subprocess
-import string
 import re
 import time
+import hashlib
+import errno
 
+# Parse arguments.
 if len(sys.argv) != 2:
 	print "This script only takes one argument - the video to play."
 	exit(1)
 
-timecode_file = sys.argv[1] + ".timecode"
+# Try to create the timecodes home directory.
+TIMECODES_DIR = os.path.join(os.path.expanduser("~"), ".timecodes")
+try:
+    os.mkdir(TIMECODES_DIR)
+except OSError as exc:
+    if exc.errno == errno.EEXIST and os.path.isdir(TIMECODES_DIR):
+        pass
+    else:
+        raise
+
+# Calculate file sha
+shasum = None
+with open(sys.argv[1], 'rb') as f:
+    h = hashlib.sha1()
+    h.update(f.read())
+    shasum = h.hexdigest()
+
+timecode_file = os.path.join(TIMECODES_DIR, shasum + ".timecode")
 
 timecode_arg = ""
 if os.path.isfile(timecode_file):
