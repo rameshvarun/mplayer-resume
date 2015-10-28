@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import argparse
 import sys
 import os
 import subprocess
@@ -8,10 +9,10 @@ import time
 import hashlib
 import errno
 
-# Parse arguments.
-if len(sys.argv) != 2:
-	print "This script only takes one argument - the video to play."
-	exit(1)
+parser = argparse.ArgumentParser(prog="mplayer-resume",
+        description="Automatically resume videos from where you left off.")
+parser.add_argument('file', help='The video file.')
+args = parser.parse_args()
 
 # Try to create the timecodes home directory.
 TIMECODES_DIR = os.path.join(os.path.expanduser("~"), ".timecodes")
@@ -25,7 +26,7 @@ except OSError as exc:
 
 # Calculate file sha
 shasum = None
-with open(sys.argv[1], 'rb') as f:
+with open(args.file, 'rb') as f:
     h = hashlib.sha1()
     h.update(f.read())
     shasum = h.hexdigest()
@@ -37,7 +38,7 @@ if os.path.isfile(timecode_file):
 	with open(timecode_file, "r") as f:
 		timecode_arg = "-ss " + f.read()
 
-player = subprocess.Popen("mplayer " + timecode_arg + " " + sys.argv[1], stdout=subprocess.PIPE , shell=True)
+player = subprocess.Popen("mplayer " + timecode_arg + " " + args.file, stdout=subprocess.PIPE , shell=True)
 
 
 code = "\x1b[J\r"
