@@ -45,6 +45,7 @@ player = subprocess.Popen(command, shell=True)
 
 try:
     seconds = 1
+    last_timecode = None
     while True:
         time.sleep(1); seconds += 1
 
@@ -57,9 +58,10 @@ try:
         if seconds % 5 != 0: continue
 
         timecode = int(re.search("<time>(\d*)</time>", result.text).group(1))
-        with open(timecode_file, 'w') as f:
-            f.write(str(timecode))
+        if timecode != last_timecode:
+            with open(timecode_file, 'w') as f: f.write(str(timecode))
             print "Position %s saved..." % timecode
+            last_timecode = timecode
 except KeyboardInterrupt: print "Ctrl-C'd - killing VLC."
 except: print "Unexpected error:", sys.exc_info()[0]
 
