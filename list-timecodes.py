@@ -24,12 +24,11 @@ parser.add_argument('files', metavar='N', nargs='*',
             help='The video files or directories.', default=['.'])
 args = parser.parse_args()
 
+from shacache import get_file_sha
+
 def print_completion(filepath):
     # Calculate file sha
-    with open(filepath, 'rb') as f:
-        h = hashlib.sha1()
-        h.update(f.read())
-        shasum = h.hexdigest()
+    shasum = get_file_sha(filepath)
 
     timecode = 0.0
     timecode_file = os.path.join(TIMECODES_DIR, shasum + ".timecode")

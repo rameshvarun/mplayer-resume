@@ -24,12 +24,8 @@ except OSError as exc:
     else:
         raise
 
-# Calculate file sha
-shasum = None
-with open(args.file, 'rb') as f:
-    h = hashlib.sha1()
-    h.update(f.read())
-    shasum = h.hexdigest()
+from shacache import get_file_sha
+shasum = get_file_sha(args.file)
 
 timecode_file = os.path.join(TIMECODES_DIR, shasum + ".timecode")
 
@@ -47,7 +43,7 @@ regex = re.compile("\s*A:\s*([-+]?\d*\.\d+|\d+)\s*V:\s*([-+]?\d*\.\d+|\d+)")
 last_save = time.time()
 def process_line(line):
 	global last_save
-	
+
 	if time.time() > last_save + 5:
 		match = regex.search(line)
 		if match:
