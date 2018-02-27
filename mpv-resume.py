@@ -10,14 +10,14 @@ import hashlib
 import errno
 import json
 
+from lib import timecodedb
+from lib.shacache import get_file_sha
+
 parser = argparse.ArgumentParser(prog="mpv-resume",
         description="Automatically resume videos from where you left off.")
 parser.add_argument('file', help='The video file.')
 args = parser.parse_args()
 
-import timecodedb
-
-from shacache import get_file_sha
 shasum = get_file_sha(args.file)
 
 timecode_arg = "-ss " + str(timecodedb.read(shasum))
